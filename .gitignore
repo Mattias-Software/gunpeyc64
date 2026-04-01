@@ -1,0 +1,5 @@
+*.map
+*.prg
+*.lbl
+*.int
+/*.asm
