@@ -154,7 +154,11 @@ void playfield_newline()
     //Generate new cells
     for (int col=0; col<PLAYFIELD_WIDTH; col++)
     {
-        playfield[PLAYFIELD_HEIGHT][col]= rand()%5;
+        char num= rand()&7;
+        if (num>4)
+            playfield[PLAYFIELD_HEIGHT][col]= 0;
+        else
+            playfield[PLAYFIELD_HEIGHT][col]= num;
     }
 
     draw_playfield(1);
@@ -200,41 +204,72 @@ int main()
     {
         keyb_poll();
 
+        //Move selection
         if (key_pressed(KSCAN_W))
         {
             if (sel_y > 0)
                 sel_y--;
             update_sel();
-            while (key_pressed(KSCAN_W)) keyb_poll();
+            while (key_pressed(KSCAN_W))
+            {
+                vic_waitFrames(1);
+                keyb_poll();
+            }
         }
         if (key_pressed(KSCAN_A))
         {
             if (sel_x > 0)
                 sel_x--;
             update_sel();
-            while (key_pressed(KSCAN_A)) keyb_poll();
+            while (key_pressed(KSCAN_A))
+            {
+                vic_waitFrames(1);
+                keyb_poll();
+            }
         }
         if (key_pressed(KSCAN_S))
         {
             if (sel_y < PLAYFIELD_HEIGHT-2)
                 sel_y++;
             update_sel();
-            while (key_pressed(KSCAN_S)) keyb_poll();
+            while (key_pressed(KSCAN_S))
+            {
+                vic_waitFrames(1);
+                keyb_poll();
+            }
         }
         if (key_pressed(KSCAN_D))
         {
             if (sel_x < PLAYFIELD_WIDTH-1)
                 sel_x++;
             update_sel();
-            while (key_pressed(KSCAN_D)) keyb_poll();
+            while (key_pressed(KSCAN_D))
+            {
+                vic_waitFrames(1);
+                keyb_poll();
+            }
         }
 
+        //Swap cells
+        if (key_pressed(KSCAN_RETURN))
+        {
+            char temp= playfield[sel_y+1][sel_x];
+            playfield[sel_y+1][sel_x]= playfield[sel_y][sel_x];
+            playfield[sel_y][sel_x]= temp;
+            update_sel();
+            while (key_pressed(KSCAN_RETURN))
+            {
+                vic_waitFrames(1);
+                keyb_poll();
+            }
+        }
+
+        //Debug
         if (key_pressed(KSCAN_G))
         {
             playfield_newline();
             while (key_pressed(KSCAN_G)) keyb_poll();
         }
-
         if (key_pressed(KSCAN_R))
         {
             draw_playfield(0);
